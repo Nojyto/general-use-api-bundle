@@ -9,11 +9,17 @@ from core.config import settings
 router = APIRouter()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/token")
 
-@router.post("/token", response_model=Token)
+@router.post(
+    "/token",
+    response_model=Token,
+    summary="Generate access token",
+    description="Generates a JWT access token for the admin user.")
 async def login(form_data: OAuth2PasswordRequestForm = Depends()):
+    if form_data.username != settings.ADMIN_USERNAME:
+        raise HTTPException(status_code=400, detail="Incorrect credentials")
     if not Hasher.verify_password(form_data.password, settings.ADMIN_PASSWORD_HASH):
-        raise HTTPException(status_code=400, detail="Incorrect password")
-    access_token, expire = create_access_token(data={"sub": "admin"})
+        raise HTTPException(status_code=400, detail="Incorrect credentials")
+    access_token, expire = create_access_token(data={"sub": settings.ADMIN_USERNAME})
     return {"access_token": access_token, "token_type": "bearer", "expire": expire.isoformat()}
 
 async def get_current_token(token: str = Depends(oauth2_scheme)):
