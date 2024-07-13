@@ -1,14 +1,28 @@
 {
-  "builds": [
-    {
-      "src": "main.py",
-      "use": "@vercel/python"
+    "version": 2,
+    "builds": [
+        {
+        "src": "main.py",
+        "use": "@vercel/python",
+            "config": {
+                "runtime": "python3.9"
+            }
+        }
+    ],
+    "routes": [
+        {
+            "src": "/static/(.*)",
+            "dest": "/static/$1"
+        },
+        {
+            "src": "/(.*)",
+            "dest": "main.py"
+        }
+    ],
+    "env": {
+        "SECRET_KEY": "@secret_key",
+        "ADMIN_USERNAME": "@admin_username",
+        "ADMIN_PASSWORD_HASH": "@admin_password_hash"
     }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "main.py"
-    }
-  ]
 }
+  
