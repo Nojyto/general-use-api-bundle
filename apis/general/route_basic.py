@@ -1,7 +1,12 @@
 from fastapi import APIRouter, Depends
+from fastapi.responses import FileResponse
 from apis.auth import get_current_token
 
 router = APIRouter()
+
+@router.get('/favicon.ico', include_in_schema=False)
+async def favicon():
+    return FileResponse('static/favicon.ico')
 
 @router.get("/")
 async def root():
